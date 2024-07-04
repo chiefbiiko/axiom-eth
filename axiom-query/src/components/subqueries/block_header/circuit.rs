@@ -220,6 +220,9 @@ pub fn handle_single_header_subquery_phase0<F: Field>(
     // parse the header RLP
     let header_witness = chip.decompose_block_header_phase0(ctx, keccak, &header_rlp);
 
+
+    log::info!("💀 💀 💀 After let header_witness");
+
     // verify MMR proof for this block
     let block_number = header_witness.get_number_value(ctx, gate);
     let block_hash = header_witness.block_hash.output_bytes.clone();
@@ -228,12 +231,16 @@ pub fn handle_single_header_subquery_phase0<F: Field>(
     //     .collect();
     // verify_mmr_proof(ctx, keccak, assigned_mmr, block_number, block_hash, mmr_proof, None);
 
+    log::info!("💀 💀 💀 After verify_mmr");
+
     let field_idx = ctx.load_witness(F::from(subquery.field_idx as u64));
     range.range_check(ctx, field_idx, FIELD_IDX_BITS);
     // if `field_idx` < `HEADER_HASH_IDX`, then it is an actual header field
     let threshold = Constant(F::from(HEADER_HASH_FIELD_IDX as u64));
     let is_idx_in_header = range.is_less_than(ctx, field_idx, threshold, FIELD_IDX_BITS);
     let header_idx = gate.mul(ctx, field_idx, is_idx_in_header);
+
+    log::info!("💀 💀 💀 After gate.mul(ctx, field_idx, is_idx_in_header)");
 
     let (_, header_fields_max_bytes) =
         get_block_header_rlp_max_lens_from_extra(chip.max_extra_data_bytes);
@@ -279,6 +286,8 @@ pub fn handle_single_header_subquery_phase0<F: Field>(
             pack_bytes_to_hilo(ctx, gate, &fixed_bytes).hi_lo()
         })
         .collect_vec();
+
+    log::info!("💀 💀 💀 After let header_fixed");
     let header_indicator = gate.idx_to_indicator(ctx, header_idx, header_fixed.len());
     let value = gate.select_array_by_indicator(ctx, &header_fixed, &header_indicator);
     let mut value = HiLo::from_hi_lo(value.try_into().unwrap());
@@ -297,6 +306,9 @@ pub fn handle_single_header_subquery_phase0<F: Field>(
     let extra_data_len = HiLo::from_hi_lo([ctx.load_zero(), extra_data.field_len]);
     value = select_hi_lo(ctx, gate, &extra_data_len, &value, return_extra_data_len);
 
+
+    log::info!("💀 💀 💀 After value = select_hi_lo(");
+
     let (logs_bloom_buf, return_logs_bloom) = handle_logs_bloom(
         ctx,
         range,
@@ -306,6 +318,8 @@ pub fn handle_single_header_subquery_phase0<F: Field>(
     );
     value = select_hi_lo(ctx, gate, &logs_bloom_buf, &value, return_logs_bloom);
 
+
+    log::info!("💀 💀 💀 After  value = select_hi_lo");
     // constrain that `field_idx` is valid: either
     // - `field_idx` is less than true length of block header list
     //   - this means you cannot request a field such as `withdrawalsRoot` if the block is before EIP-4895
@@ -317,6 +331,8 @@ pub fn handle_single_header_subquery_phase0<F: Field>(
         gate.sum(ctx, [return_hash, return_size, return_extra_data_len, return_logs_bloom]);
     let is_valid = gate.select(ctx, is_valid_header_idx, is_special_case, is_idx_in_header);
     gate.assert_is_const(ctx, &is_valid, &F::ONE);
+
+    log::info!("💀 💀 💀 After  gate.assert_is_const");
 
     PayloadHeaderSubquery {
         header_witness,
