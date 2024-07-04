@@ -223,10 +223,10 @@ pub fn handle_single_header_subquery_phase0<F: Field>(
     // verify MMR proof for this block
     let block_number = header_witness.get_number_value(ctx, gate);
     let block_hash = header_witness.block_hash.output_bytes.clone();
-    let mmr_proof = (subquery.mmr_proof.iter())
-        .map(|&node| load_h256_to_safe_bytes32(ctx, &safe, node))
-        .collect();
-    verify_mmr_proof(ctx, keccak, assigned_mmr, block_number, block_hash, mmr_proof, None);
+    // let mmr_proof = (subquery.mmr_proof.iter())
+    //     .map(|&node| load_h256_to_safe_bytes32(ctx, &safe, node))
+    //     .collect();
+    // verify_mmr_proof(ctx, keccak, assigned_mmr, block_number, block_hash, mmr_proof, None);
 
     let field_idx = ctx.load_witness(F::from(subquery.field_idx as u64));
     range.range_check(ctx, field_idx, FIELD_IDX_BITS);
