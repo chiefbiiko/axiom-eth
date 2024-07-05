@@ -23,7 +23,6 @@ impl<F: ScalarField> RlcCircuitBuilder<F> {
     /// We keep it in FirstPhase for logical clarity.)
     pub fn raw_synthesize_phase0(&self, config: &RlcConfig<F>, mut layouter: impl Layouter<F>) {
         let usable_rows = config.rlc.usable_rows;
-        log::info!("✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞ phase_manager {:?}", &self.base.core().phase_manager);
         layouter
             .assign_region(
                 || "base phase 0",
@@ -60,6 +59,7 @@ impl<F: ScalarField> RlcCircuitBuilder<F> {
         enforce_copy_constraints: bool,
     ) {
         let usable_rows = config.rlc.usable_rows;
+        log::info!("✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞ phase_manager[1] {:?}", &self.base.core().phase_manager[1]);
         layouter
             .assign_region(
                 || "base+rlc phase 1",
