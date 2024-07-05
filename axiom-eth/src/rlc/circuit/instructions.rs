@@ -59,7 +59,6 @@ impl<F: ScalarField> RlcCircuitBuilder<F> {
         enforce_copy_constraints: bool,
     ) {
         let usable_rows = config.rlc.usable_rows;
-        log::info!("✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞ phase_manager[1] {:?}", &self.base.core().phase_manager[1]);
         layouter
             .assign_region(
                 || "base+rlc phase 1",

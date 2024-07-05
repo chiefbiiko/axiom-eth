@@ -95,6 +95,7 @@ impl<F: ScalarField> RlcConfig<F> {
     }
 
     pub fn basic_gates(&self, phase: usize) -> Vec<BasicGateConfig<F>> {
+        log::info!("✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞✞ self.base.gate().basic_gates[phase] {} {:?}", phase, &self.base.gate().basic_gates[phase].clone());
         self.base.gate().basic_gates[phase].clone()
     }
 
